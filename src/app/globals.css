@@ -25,3 +25,20 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+/* CardDisplay.css */
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 10px;
+  padding: 10px;
+  width: 200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Add more styles as needed */
