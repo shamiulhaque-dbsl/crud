@@ -1,13 +1,12 @@
 "use client"
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from 'axios';
-
-// Import the Tailwind CSS styles
 import 'tailwindcss/tailwind.css';
+import { AuthContext } from 'provider/AuthProvider';
 
 const AddCustomer = () => {
     const [formData, setFormData] = useState({});
-
+    const { custom,SetCustom} = useContext(AuthContext);
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -21,11 +20,14 @@ const AddCustomer = () => {
         try {
             const response = await axios.post('/api/customer/add-customer', formData);
             console.log('Customer created:', response);
-        } catch (error) {
+            
+        }
+        
+         catch (error) {
             console.error('Error creating customer:', error);
         }
     };
-
+   
     return (
         <div className="max-w-md mx-auto mt-8">
             <h1 className="text-3xl font-bold mb-4">Create Customer</h1>
