@@ -23,7 +23,12 @@ const AddCustomer = () => {
             const response = await axios.post('/api/customer/add-customer', formData);
             console.log('Customer created:', response);
             if (response) {
-               
+                setFormData({
+                    name: '',
+                    age: '',
+                    gender: 'option',
+                    address: '',
+                });
                 //toast
                 toast("Contact deleted successfully");
                 router.push('/')
