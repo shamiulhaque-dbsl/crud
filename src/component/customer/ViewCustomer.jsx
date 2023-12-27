@@ -1,14 +1,16 @@
 "use client"
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { AuthContext } from 'provider/AuthProvider';
-import ContentLoader from 'react-content-loader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/navigation';
+import { useAppContext } from 'provider/AppContext';
 
 
 const ViewCustomer = () => {
-  const { custom,SetCustom,myid,setMyid} = useContext(AuthContext);
+  const router = useRouter();
+  const { user,setUser } = useAppContext()
+  const [form, setForm] = useState([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [Id, setId] = useState(1000);
@@ -38,15 +40,27 @@ const ViewCustomer = () => {
 };
 
 const handleSubmits = async (e) => {
-  console.log(formData,"my name")
+  //console.log(formData,"my name")
     e.preventDefault();
 
     try {
         const response = await axios.put('/api/customer/edit-customer', formData);
-        console.log('Customer created:', response);
+        console.log('Edited created:', response);
         if (response) {
+          setOpen(false)
+         // update the data without refrash 
+          const updatedUser = user.map((item) =>
+          item.id === Id ? { ...item, ...formData } : item
+        );
+        setUser(updatedUser);
+
+
+
             //toast
             toast("Contact deleted successfully");
+            router.push('/')
+            
+           
           }
         
     }
@@ -72,41 +86,52 @@ const handleSubmits = async (e) => {
 
       
       if (res.ok) {
+  
+        // Remove the deleted user from the user state
+        const updatedUser = user.filter((item) => item.id !== id);
+        setUser(updatedUser);
+
         //toast
         toast("Contact deleted successfully");
+        router.push('/')
+        
+       
       }
     }
   }
 
 
   useEffect(() => {
-    // Use Axios to fetch data from your API
-    axios.get('/api/customer') // Replace with your API endpoint
-      .then(response => {
-        SetCustom(response.data.users);
-        console.log(response.data.users)
-       
-      })
-     
-      .catch(error => {
+    const fetchData = async () =>
+     {
+      try {
+        const response = await axios.get('/api/customer');
+        console.log(response.data.users);
+        setUser(response.data.users);
+          }
+       catch (error)
+        {
         console.error('Error fetching data:', error);
-      });
-  }, []);
+        }
+      };
+  
+    fetchData(); // Initial fetch
+  
+    // If there's a successful create or delete operation, trigger a re-fetch
+    const shouldRefetch = localStorage.getItem('shouldRefetch');
+    if (shouldRefetch) {
+      localStorage.removeItem('shouldRefetch'); // Remove the flag
+      fetchData();
+    }
+  }, [user]); // Trigger re-fetch when user state changes
   
 
-   if (!custom) {
-    return <ContentLoader viewBox="0 0 380 70">
-    {/* Only SVG shapes */}
-    <rect x="0" y="0" rx="5" ry="5" width="70" height="70" />
-    <rect x="80" y="17" rx="4" ry="4" width="300" height="13" />
-    <rect x="80" y="40" rx="3" ry="3" width="250" height="10" />
-  </ContentLoader>;
-  }
   
 
   return (
+    <div>
     <div className="card-container">
-      {custom.map(item => (
+      {user.map(item => (
         <div key={item.id} className="card">
           <p>ID: {item.id}</p>
           <p>Name: {item.name}</p>
@@ -115,15 +140,18 @@ const handleSubmits = async (e) => {
           <p>Address: {item.address}</p>
           <button
   onClick={() => handleDelete (item.id)}
-  className="bg-red-400 hover:bg-red-600 px-5 py-2 text-3xl rounded-xl"/>
-  <button onClick={()=> handeledit (item)}> Edit </button>
+  className="bg-red-500 hover:bg-red-700 text-white px-1 py-1 text-sm rounded-md"> Delete </button>
+  <button className="ml-2 mt-5 bg-sky-500 hover:bg-sky-700 text-white px-4 py-1 text-sm rounded-md"
+   onClick={()=> handeledit (item)}> Edit </button>
  
         </div>
       ))}     <ToastContainer />
-       {
+       
+    </div>
+    {
                 open && 
                 <ul >
-                <div className="ml-80 mt-8 mb-20">
+                <div className=" mt-8 mb-20 ml-8 mr-40 absolute top-0 left-0 bg-gray-300 rounded-xl px-5 pt-5 pb-16">
             <h1 className="text-3xl font-bold mb-4">Edit Customer</h1>
             <form onSubmit={handleSubmits} className="space-y-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-600">Name:</label>
