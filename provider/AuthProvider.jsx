@@ -6,7 +6,8 @@ export const AuthContext = createContext(null);
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loader, setLoader] = useState(true);
-  const [custom,SetCustom] = useState([])
+  const [custom,SetCustom] = useState([]);
+  const [myid,setMyid] = useState(1032);
 
  
   const AllInfo = {
@@ -15,7 +16,9 @@ const AuthProvider = ({ children }) => {
     user, 
     setUser,
     custom,
-    SetCustom
+    SetCustom,
+    myid,
+    setMyid
     
   };
 

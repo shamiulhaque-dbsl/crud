@@ -3,6 +3,8 @@ import { useContext, useState } from 'react';
 import axios from 'axios';
 import 'tailwindcss/tailwind.css';
 import { AuthContext } from 'provider/AuthProvider';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddCustomer = () => {
     const [formData, setFormData] = useState({});
@@ -20,6 +22,10 @@ const AddCustomer = () => {
         try {
             const response = await axios.post('/api/customer/add-customer', formData);
             console.log('Customer created:', response);
+            if (response) {
+                //toast
+                toast("Contact deleted successfully");
+              }
             
         }
         
@@ -46,10 +52,11 @@ const AddCustomer = () => {
                 </select>
 
                 <label htmlFor="address" className="block text-sm font-medium text-gray-600">Address:</label>
-                <textarea id="address" name="address" value={formData.address} onChange={handleChange} className="w-full px-3 py-40 border rounded-md" required></textarea>
+                <textarea id="address" name="address" value={formData.address} onChange={handleChange} className="w-full px-3 py-3 border rounded-md" required></textarea>
 
                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">Create Customer</button>
             </form>
+            <ToastContainer />
         </div>
     );
 };

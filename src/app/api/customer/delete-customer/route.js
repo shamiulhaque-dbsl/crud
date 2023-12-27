@@ -5,14 +5,13 @@ const prisma = new PrismaClient();
 
 
 export async function DELETE(request) {
-    const body = await request.json();
-    console.log(body.id)
-    const deleteUser = await prisma.customer.delete({
-        where: {
-          id: 1021
-        },
-      })
-      console.log("Id is deleted")
-    return NextResponse.json({  deleteUser });
+
+  const body = await request.json();
+  const deleteUser = await prisma.customer.delete({
+    where: {
+      id: parseInt(body.id)
+    },
+  })
+    return NextResponse.json({ message: deleteUser });
 }
   
